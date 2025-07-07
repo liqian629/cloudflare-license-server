@@ -1,4 +1,4 @@
-# Cloudflare Pages 部署指南
+# Cloudflare Pages 部署指南（无配置文件版本）
 
 ## 🚀 快速部署
 
@@ -20,7 +20,7 @@ wrangler pages project create augment-license-server --compatibility-date=2024-0
 
 # 2. 创建 D1 数据库
 wrangler d1 create augment-licenses
-# 记录返回的 database_id，更新 .wrangler-pages.toml 中的 database_id
+# 记录返回的 database_id，稍后在 Dashboard 中绑定
 
 # 3. 设置环境变量
 wrangler secret put RSA_PRIVATE_KEY
@@ -37,19 +37,44 @@ npm run build:pages
 wrangler pages deploy public --project-name=augment-license-server --compatibility-date=2024-01-01
 ```
 
-### 方法三：GitHub Pages 集成
+### 方法三：GitHub Pages 集成（推荐用于生产环境）
 
-1. 在 Cloudflare Dashboard 中连接 GitHub 仓库
-2. 配置构建设置：
+1. **在 Cloudflare Dashboard 中连接 GitHub 仓库**
+   - 访问 [Cloudflare Dashboard](https://dash.cloudflare.com/)
+   - 点击 "Pages" → "Create a project" → "Connect to Git"
+   - 选择仓库：`liqian629/cloudflare-license-server`
+
+2. **配置构建设置**：
+   - **Framework preset**: None
    - **Build command**: `npm run build:pages`
    - **Build output directory**: `public`
-3. 设置环境变量和 D1 数据库绑定
+   - **Root directory**: `/`
 
-## 📁 配置文件说明
+3. **设置环境变量**（在 Pages 项目设置中）：
+   - `RSA_PRIVATE_KEY`: 您的 RSA 私钥
+   - `RSA_PUBLIC_KEY`: 您的 RSA 公钥
+   - `ADMIN_API_KEY`: 您的管理员密钥
 
-- `wrangler.toml` - Workers 专用配置
-- `.wrangler-pages.toml` - Pages 专用配置
-- `pages.toml` - 备用 Pages 配置
+4. **绑定 D1 数据库**（在 Pages 项目设置的 Functions 标签页中）：
+   - Variable name: `DB`
+   - D1 database: 选择您创建的 `augment-licenses` 数据库
+
+## 📁 项目结构（无配置文件）
+
+```
+cloudflare-license-server/
+├── functions/           # Pages Functions (API 路由)
+├── public/             # 静态文件 (Web 界面)
+├── src/                # 共享代码
+├── database/           # 数据库脚本
+├── scripts/            # 部署脚本
+└── _routes.json        # 路由配置
+```
+
+**优势**：
+- ✅ 无配置文件冲突
+- ✅ 通过 Dashboard 直接管理
+- ✅ 更简单的部署流程
 
 ## 🔑 环境变量
 
@@ -63,14 +88,27 @@ wrangler pages deploy public --project-name=augment-license-server --compatibili
 
 ## 🗄️ D1 数据库配置
 
-需要创建 D1 数据库并更新配置文件中的 `database_id`：
+### 创建数据库
 
-```toml
-[[d1_databases]]
-binding = "DB"
-database_name = "augment-licenses"
-database_id = "your-actual-database-id-here"
+```bash
+# 创建 D1 数据库
+wrangler d1 create augment-licenses
+
+# 初始化数据库结构
+wrangler d1 execute augment-licenses --file=./database/schema.sql
+
+# 生成并导入种子数据
+node ./scripts/generate-seed-data.js
+wrangler d1 execute augment-licenses --file=./database/seed.sql
 ```
+
+### 在 Dashboard 中绑定
+
+1. 进入您的 Pages 项目设置
+2. 点击 "Functions" 标签页
+3. 在 "D1 database bindings" 部分添加：
+   - **Variable name**: `DB`
+   - **D1 database**: 选择 `augment-licenses`
 
 ## 🧪 测试部署
 
@@ -82,13 +120,18 @@ database_id = "your-actual-database-id-here"
 
 ### 常见问题
 
-1. **配置文件冲突**：确保使用正确的配置文件
-   - Workers 部署：使用 `wrangler.toml`
-   - Pages 部署：使用 `.wrangler-pages.toml`
+1. **"Output directory not found" 错误**：
+   - 确保运行了 `npm run build:pages`
+   - 检查 `public` 目录是否存在且包含 `index.html`
 
-2. **数据库 ID 错误**：确保在配置文件中更新了正确的 `database_id`
+2. **环境变量未设置**：
+   - 在 Cloudflare Dashboard 的 Pages 项目设置中添加环境变量
+   - 或使用 `wrangler secret put` 命令设置
 
-3. **环境变量未设置**：确保所有必需的环境变量都已正确设置
+3. **D1 数据库连接失败**：
+   - 确保在 Pages 项目中正确绑定了 D1 数据库
+   - 检查数据库名称是否为 `augment-licenses`
+   - 确保变量名为 `DB`
 
 ### 查看日志
 

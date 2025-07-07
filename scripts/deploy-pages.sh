@@ -112,7 +112,7 @@ echo "✅ 构建完成，开始部署..."
 
 # 部署到 Pages
 echo "🚀 部署到 Cloudflare Pages..."
-wrangler pages deploy public --project-name="$PROJECT_NAME" --compatibility-date=2024-01-01 --config=pages.toml
+wrangler pages deploy public --project-name="$PROJECT_NAME" --compatibility-date=2024-01-01
 
 # 获取部署 URL
 DEPLOY_URL="https://$PROJECT_NAME.pages.dev"
