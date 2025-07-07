@@ -1,4 +1,6 @@
 # Cloudflare Pages 专用配置文件
+# 这个文件会被 Pages 自动识别
+
 name = "augment-license-server"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
@@ -11,6 +13,12 @@ pages_build_output_dir = "public"
 ENVIRONMENT = "production"
 LICENSE_IDENTITY = "AugmentCode"
 EXPIRE_AFTER = "31536000000"
+
+# D1 数据库配置
+[[d1_databases]]
+binding = "DB"
+database_name = "augment-licenses"
+database_id = "your-database-id-here"
 
 # 生产环境配置
 [env.production]
@@ -26,12 +34,6 @@ database_id = "your-database-id-here"
 vars = { ENVIRONMENT = "preview", LICENSE_IDENTITY = "AugmentCode", EXPIRE_AFTER = "31536000000" }
 
 [[env.preview.d1_databases]]
-binding = "DB"
-database_name = "augment-licenses"
-database_id = "your-database-id-here"
-
-# D1 数据库配置（默认）
-[[d1_databases]]
 binding = "DB"
 database_name = "augment-licenses"
 database_id = "your-database-id-here"

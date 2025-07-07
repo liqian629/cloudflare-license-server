@@ -4,9 +4,6 @@ main = "src/index.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Cloudflare Pages 配置
-pages_build_output_dir = "public"
-
 # D1 数据库配置
 [[d1_databases]]
 binding = "DB"
@@ -21,11 +18,12 @@ EXPIRE_AFTER = "31536000000"  # 1年，单位毫秒
 
 # 生产环境配置
 [env.production]
-vars = { ENVIRONMENT = "production" }
+vars = { ENVIRONMENT = "production", LICENSE_IDENTITY = "AugmentCode", EXPIRE_AFTER = "31536000000" }
 
-# 开发环境配置  
-[env.development]
-vars = { ENVIRONMENT = "development" }
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "augment-licenses"
+database_id = "your-database-id-here"
 
 # 密钥配置（通过 wrangler secret 命令设置）
 # wrangler secret put RSA_PRIVATE_KEY

@@ -8,7 +8,7 @@
     "build:pages": "echo 'Building for Cloudflare Pages...' && echo 'Public directory ready'",
     "build:workers": "echo 'Building for Cloudflare Workers...'",
     "dev": "wrangler dev",
-    "dev:pages": "wrangler pages dev public --compatibility-date=2024-01-01",
+    "dev:pages": "wrangler pages dev public --compatibility-date=2024-01-01 --config=.wrangler-pages.toml",
     "deploy": "wrangler deploy",
     "deploy:pages": "./scripts/deploy-pages.sh",
     "db:init": "wrangler d1 execute augment-licenses --file=./database/schema.sql",
