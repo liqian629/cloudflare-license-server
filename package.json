@@ -1,0 +1,31 @@
+{
+  "name": "augment-license-server",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers版本的Augment许可证服务器",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute augment-licenses --file=./database/schema.sql",
+    "db:seed": "wrangler d1 execute augment-licenses --file=./database/seed.sql",
+    "test": "vitest",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": [
+    "license",
+    "server",
+    "cloudflare",
+    "workers",
+    "augment",
+    "activation"
+  ],
+  "author": "Augment Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241218.0",
+    "eslint": "^8.57.0",
+    "vitest": "^1.0.0",
+    "wrangler": "^3.78.12"
+  },
+  "dependencies": {}
+}
