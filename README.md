@@ -33,7 +33,38 @@
 - `POST /v1/admin/revoke` - 撤销许可证（管理接口）
 - `GET /v1/health` - 健康检查
 
-## 🛠️ 部署指南
+## 🚀 快速开始
+
+### 部署选择
+
+本项目支持两种 Cloudflare 部署方式：
+
+#### 🌟 方式一：Cloudflare Pages（推荐）
+- ✅ 自动 CI/CD 集成
+- ✅ 免费额度更高
+- ✅ 更好的静态资源处理
+- ✅ 内置 Web 界面
+
+```bash
+# 克隆仓库
+git clone https://github.com/liqian629/cloudflare-license-server.git
+cd cloudflare-license-server
+
+# 一键部署到 Pages
+./scripts/deploy-pages.sh
+```
+
+#### ⚡ 方式二：Cloudflare Workers
+- ✅ 更快的冷启动
+- ✅ 更简单的配置
+- ✅ 适合纯 API 服务
+
+```bash
+# 一键部署到 Workers
+./scripts/deploy.sh
+```
+
+## 🛠️ 详细部署指南
 
 ### 1. 环境准备
 
@@ -45,10 +76,50 @@ npm install -g wrangler
 wrangler login
 
 # 克隆项目
-cd /path/to/your/project
+git clone https://github.com/liqian629/cloudflare-license-server.git
+cd cloudflare-license-server
 ```
 
-### 2. 创建 D1 数据库
+### 2. 选择部署方式
+
+#### A. Cloudflare Pages 部署
+
+**优势：**
+- 🌐 内置 Web 界面 (访问 `https://your-project.pages.dev`)
+- 🔄 GitHub 集成自动部署
+- 📊 更高的免费额度
+- 🎨 静态资源优化
+
+**项目结构：**
+```
+cloudflare-license-server/
+├── functions/           # Pages Functions (API 路由)
+│   ├── _middleware.js   # 全局中间件
+│   └── api/v1/         # API 端点
+├── public/             # 静态文件
+│   └── index.html      # Web 界面
+├── src/                # 共享代码
+└── _routes.json        # 路由配置
+```
+
+**部署命令：**
+```bash
+./scripts/deploy-pages.sh
+```
+
+#### B. Cloudflare Workers 部署
+
+**优势：**
+- ⚡ 更快的冷启动
+- 🎯 专注于 API 服务
+- 🔧 更简单的配置
+
+**部署命令：**
+```bash
+./scripts/deploy.sh
+```
+
+### 3. 创建 D1 数据库
 
 ```bash
 # 创建数据库

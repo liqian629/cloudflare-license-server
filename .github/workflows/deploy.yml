@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Workers
+name: Deploy to Cloudflare
 
 on:
   push:
@@ -6,11 +6,21 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      deployment_type:
+        description: 'Choose deployment type'
+        required: true
+        default: 'pages'
+        type: choice
+        options:
+          - pages
+          - workers
 
 jobs:
-  deploy:
+  deploy-workers:
     runs-on: ubuntu-latest
-    name: Deploy
+    name: Deploy to Cloudflare Workers
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.deployment_type == 'workers'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,3 +40,36 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
+
+  deploy-pages:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Pages
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.deployment_type == 'pages'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for Pages
+        run: |
+          echo "Building for Cloudflare Pages deployment..."
+          # 确保所有必要的文件都在正确位置
+          ls -la functions/
+          ls -la public/
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: augment-license-server
+          directory: public
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
