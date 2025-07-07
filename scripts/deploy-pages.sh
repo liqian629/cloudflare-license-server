@@ -93,6 +93,23 @@ node ./scripts/generate-seed-data.js
 echo "插入预置数据..."
 wrangler d1 execute "$DB_NAME" --file=./database/seed.sql
 
+# 构建项目
+echo "🔨 构建项目..."
+npm run build:pages
+
+# 确保 public 目录存在且有内容
+if [ ! -d "public" ]; then
+    echo "❌ public 目录不存在，创建中..."
+    mkdir -p public
+fi
+
+if [ ! -f "public/index.html" ]; then
+    echo "❌ public/index.html 不存在，请检查构建过程"
+    exit 1
+fi
+
+echo "✅ 构建完成，开始部署..."
+
 # 部署到 Pages
 echo "🚀 部署到 Cloudflare Pages..."
 wrangler pages deploy public --project-name="$PROJECT_NAME" --compatibility-date=2024-01-01

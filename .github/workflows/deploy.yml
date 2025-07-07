@@ -61,9 +61,11 @@ jobs:
       - name: Build for Pages
         run: |
           echo "Building for Cloudflare Pages deployment..."
+          npm run build:pages
           # 确保所有必要的文件都在正确位置
           ls -la functions/
           ls -la public/
+          echo "✅ Build completed successfully"
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1

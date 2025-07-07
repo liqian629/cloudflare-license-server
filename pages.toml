@@ -1,0 +1,26 @@
+# Cloudflare Pages 专用配置文件
+# 这个文件专门用于 Pages 部署配置
+
+name = "augment-license-server"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Pages 构建配置
+pages_build_output_dir = "public"
+
+# D1 数据库配置
+[[d1_databases]]
+binding = "DB"
+database_name = "augment-licenses"
+database_id = "your-database-id-here"  # 需要替换为实际的数据库ID
+
+# 环境变量
+[vars]
+ENVIRONMENT = "production"
+LICENSE_IDENTITY = "AugmentCode"
+EXPIRE_AFTER = "31536000000"  # 1年，单位毫秒
+
+# 密钥配置（通过 Cloudflare Dashboard 或 wrangler secret 命令设置）
+# RSA_PRIVATE_KEY
+# RSA_PUBLIC_KEY  
+# ADMIN_API_KEY
